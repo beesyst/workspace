@@ -1,18 +1,17 @@
 name: Auto Cheatsheets TOC
 
 on:
-  workflow_dispatch:      # запуск вручную из Actions
-  push:                   # и автоматически при изменении любых .md
+  workflow_dispatch:
+  push:
     paths:
       - '**/*.md'
 
 permissions:
-  contents: write         # нужно, чтобы экшен мог закоммитить изменения
+  contents: write
 
 jobs:
   update-toc:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -20,34 +19,36 @@ jobs:
         with:
           node-version: '20'
 
-      # 1) Обновляем TOC внутри всех шпаргалок
+      # 1) Генерим TOC внутри всех шпаргалок (ВНИМАНИЕ: путь без префикса workspace/)
       - name: Generate TOC in cheatsheets
         run: |
           npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # 2) Вставляем сворачиваемые оглавления шпаргалок в README
+      # 2) Вставляем сворачиваемые оглавления в README (корень репозитория)
       - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
           set -e
-
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
-          # Собираем блок
+          # собираем новый блок
           {
             echo "${TOC_START}"
             echo
             find cheatsheets -type f -name "*.md" | sort | while read FILE; do
               REL="$FILE"
               NAME="$(basename "$FILE" .md | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')"
+
               echo "<details>"
               echo "  <summary><strong><a href=\"$REL\">$NAME</a></strong> — оглавление</summary>"
               echo
-              # вытаскиваем DOCTOC блок из файла
+
+              # вытаскиваем doctoc-блок из файла и правим ссылки на якоря
               awk '/<!-- START doctoc -->/{flag=1;next}/<!-- END doctoc -->/{flag=0}flag' "$FILE" \
                 | sed "s|](#|]($REL#|g"
+
               echo
               echo "</details>"
               echo
@@ -55,11 +56,11 @@ jobs:
             echo "${TOC_END}"
           } > README.new
 
-          # Заменяем старый блок в README
+          # заменяем блок в README между маркерами
           awk -v start="${TOC_START}" -v end="${TOC_END}" '
             BEGIN{inblk=0}
             {
-              if ($0==start){print; while(getline line<"README.new"){print line}; inblk=1; next}
+              if ($0==start){print; while(getline l<"README.new"){print l}; inblk=1; next}
               if ($0==end){inblk=0}
               if (!inblk) print
             }
@@ -68,5 +69,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs(toc): auto update cheatsheets TOC in README [skip ci]"
-          file_pattern: |
-            **/*.md
+          file_pattern: "**/*.md"
