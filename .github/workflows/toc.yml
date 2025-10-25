@@ -55,7 +55,7 @@ jobs:
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
       # >>> Единственное существенное отличие — формируем ОТКРЫТЫЙ список без <details> и без строки "Оглавление"
-      - name: Inject cheatsheets TOC into README (open list, no heading)
+      - name: Inject cheatsheets TOC into README (open list, no heading, purge leftover <details>)
         shell: bash
         run: |
           set -euo pipefail
@@ -73,23 +73,23 @@ jobs:
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
-            # Заголовок берём из первого H1
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Извлечь doctoc-блок, убрать строку "## Оглавление" и комментарии, починить якоря,
-            # сделать это вложенным списком (два пробела слева)
+            # Берём doctoc-контент, убираем строку "## Оглавление" и комментарии, чинём якоря
             TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
               | sed -E '/^<!--/d' \
-              | sed "s|](#|]($REL#|g" \
-            )"
+              | sed "s|](#|]($REL#|g")"
 
-            # Верхний пункт — ссылка на файл
+            # Верхний пункт – ссылка на файл
             echo "- [$TITLE]($REL)" >> "$TMP"
+            # Пустая строка обязателена, чтобы GitHub показал вложенный список как дочерний
+            echo >> "$TMP"
+
             # Вложенный список (если есть)
             if [[ -n "$TOC_CONTENT" ]]; then
               printf '%s\n' "$TOC_CONTENT" | sed 's/^/  /' >> "$TMP"
@@ -99,13 +99,26 @@ jobs:
 
           echo "$TOC_END" >> "$TMP"
 
-          # Заменить блок в README на собранный
+          # Подменяем блок в README на новый
           awk -v start="$TOC_START" -v end="$TOC_END" '
             BEGIN {inblk=0}
             {
               if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
               if ($0==end)   { inblk=0; next }
               if (!inblk) print
+            }
+          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+
+          # На всякий случай подчистим любые <details> внутри блока (если вдруг сохранились)
+          awk -v start="$TOC_START" -v end="$TOC_END" '
+            BEGIN{in=0}
+            {
+              if ($0==start) {in=1; print; next}
+              if ($0==end)   {in=0; print; next}
+              if (in==1) {
+                gsub(/<details>|<\/details>|<summary>|<\/summary>/,"")
+              }
+              print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 
