@@ -54,62 +54,60 @@ jobs:
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # >>> Единственное существенное отличие — формируем ОТКРЫТЫЙ список без <details> и без строки "Оглавление"
-      - name: Inject cheatsheets TOC into README (open list, no heading, purge leftover <details>)
+      - name: Inject cheatsheets TOC into README (open list)
         shell: bash
         run: |
           set -euo pipefail
+
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
           TMP="README.new"
           : > "$TMP"
-          echo "$TOC_START" >> "$TMP"
-          echo >> "$TMP"
 
+          # Собираем все шпаргалки
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
+            # Заголовок H1 как название (или fallback из имени файла)
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
+            # Берём doctoc-контент, убираем первую строку "## Оглавление" и любые HTML-комментарии,
+            # и фиксируем якоря (добавляем префикс файла)
             TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
               | sed -E '/^<!--/d' \
               | sed "s|](#|]($REL#|g")"
 
+            # Родительский пункт
             echo "- [$TITLE]($REL)" >> "$TMP"
-            echo >> "$TMP"
 
+            # Подпункты: без пустой строки, с отступом 4 пробела
             if [[ -n "$TOC_CONTENT" ]]; then
-              printf '%s\n' "$TOC_CONTENT" | sed 's/^/  /' >> "$TMP"
-              echo >> "$TMP"
+              printf '%s\n' "$TOC_CONTENT" | sed 's/^/    /' >> "$TMP"
             fi
+
+            # Пустая строка между разными файлами
+            echo >> "$TMP"
           done
 
-          echo "$TOC_END" >> "$TMP"
-
+          # Подменяем содержимое блока между маркерами на контент из TMP (без дублирования маркеров)
           awk -v start="$TOC_START" -v end="$TOC_END" '
             BEGIN {inblk=0}
             {
-              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
-              if ($0==end)   { inblk=0; print; next }
+              if ($0==start) {
+                print;                        # сам START оставляем
+                while ((getline l < "README.new") > 0) print l;  # вставляем новый контент
+                inblk=1;                      # и начинаем пропускать до END
+                next
+              }
+              if ($0==end) { inblk=0; print; next }  # печатаем END и выходим из режима пропуска
               if (!inblk) print
-            }
-          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
-
-          # Чистим любые <details>/<summary> внутри блока на всякий случай
-          awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN{inblk=0}
-            {
-              if ($0==start) {inblk=1; print; next}
-              if ($0==end)   {inblk=0; print; next}
-              if (inblk==1) { gsub(/<details>|<\/details>|<summary>|<\/summary>/,"") }
-              print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 
