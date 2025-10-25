@@ -54,67 +54,79 @@ jobs:
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      - name: Inject cheatsheets TOC into README (open list)
+      - name: Inject cheatsheets TOC into README (open list, robust replace)
         shell: bash
         run: |
           set -euo pipefail
 
           README="README.md"
-          TOC_START="<!-- START:cheatsheets-toc -->"
-          TOC_END="<!-- END:cheatsheets-toc -->"
+          START_RE="^\\s*<!--\\s*START:cheatsheets-toc\\s*-->\\s*$"
+          END_RE="^\\s*<!--\\s*END:cheatsheets-toc\\s*-->\\s*$"
 
-          TMP="README.new"
+          TMP="README.list"
           : > "$TMP"
 
-          # Собираем все шпаргалки
+          # Собрать открытый список
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
-            # Заголовок H1 как название (или fallback из имени файла)
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Берём doctoc-контент, убираем первую строку "## Оглавление" и любые HTML-комментарии,
-            # и фиксируем якоря (добавляем префикс файла)
-            TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
+            TOC_CONTENT="$(
+              awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
               | sed -E '/^<!--/d' \
-              | sed "s|](#|]($REL#|g")"
+              | sed "s|](#|]($REL#|g"
+            )"
 
-            # Родительский пункт
             echo "- [$TITLE]($REL)" >> "$TMP"
-
-            # Подпункты: без пустой строки, с отступом 4 пробела
             if [[ -n "$TOC_CONTENT" ]]; then
               printf '%s\n' "$TOC_CONTENT" | sed 's/^/    /' >> "$TMP"
             fi
-
-            # Пустая строка между разными файлами
             echo >> "$TMP"
           done
 
-          # Подменяем содержимое блока между маркерами на контент из TMP (без дублирования маркеров)
-          awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN {inblk=0}
+          # Гарантированно заменить содержимое между маркерами (по регулярке),
+          # и подчистить любые <details>/<summary> внутри блока.
+          awk -v start_re="$START_RE" -v end_re="$END_RE" '
+            BEGIN { inblk=0 }
+            $0 ~ start_re {
+              print $0
+              while ((getline l < "README.list") > 0) print l
+              inblk=1
+              next
+            }
+            $0 ~ end_re {
+              inblk=0
+              print $0
+              next
+            }
             {
-              if ($0==start) {
-                print;                        # сам START оставляем
-                while ((getline l < "README.new") > 0) print l;  # вставляем новый контент
-                inblk=1;                      # и начинаем пропускать до END
-                next
-              }
-              if ($0==end) { inblk=0; print; next }  # печатаем END и выходим из режима пропуска
               if (!inblk) print
             }
-          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+          ' "$README" \
+          | awk -v start_re="$START_RE" -v end_re="$END_RE" '
+              BEGIN { inblk=0 }
+              $0 ~ start_re { inblk=1; print; next }
+              $0 ~ end_re   { inblk=0; print; next }
+              {
+                if (inblk==1) {
+                  gsub(/<\\/?details>|<\\/?summary>/, "", $0)
+                }
+                print
+              }
+            ' > "${README}.tmp"
+
+          mv "${README}.tmp" "$README"
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs(toc): auto update cheatsheets TOC"
+          commit_message: "docs(toc): open TOC list in README (no <details>)"
           file_pattern: |
             cheatsheets/**/*.md
             README.md
