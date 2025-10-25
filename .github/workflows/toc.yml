@@ -15,6 +15,7 @@ permissions:
 jobs:
   update-toc:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +27,6 @@ jobs:
         with:
           node-version: '20'
 
-      # Гарантируем плейсхолдеры doctoc сразу после первого H1
       - name: Ensure doctoc placeholders exist after first H1
         shell: bash
         run: |
@@ -53,35 +53,37 @@ jobs:
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # Собираем свернутые блоки (<details>) с чистым списком без слова "Оглавление"
-      - name: Inject cheatsheets TOC into README (details, clean)
+      - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
           set -euo pipefail
+
           README="README.md"
+          TOC_START="<!-- START:cheatsheets-toc -->"
+          TOC_END="<!-- END:cheatsheets-toc -->"
+
           TMP="README.new"
           : > "$TMP"
+          echo "$TOC_START" >> "$TMP"
+          echo >> "$TMP"
 
+          # Собираем список шпаргалок
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
-            # Название из первого H1 (или fallback из имени файла)
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Докток-контент: выбрасываем первую строку "## Оглавление" и комментарии, чиним якоря
-            TOC_CONTENT="$(
-              awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
-              | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
-              | sed -E '/^<!--/d' \
-              | sed "s|](#|]($REL#|g"
-            )"
+            # Извлекаем doctoc-блок как есть и префиксим локальные якоря путём файла
+            TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
+              | sed "s|](#|]($REL#|g")"
 
             {
               echo "<details>"
+              # ВАЖНО: пустая строка после summary нужна для корректного рендера GitHub
               printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
               printf '%s\n\n' "$TOC_CONTENT"
               echo "</details>"
@@ -89,29 +91,20 @@ jobs:
             } >> "$TMP"
           done
 
-          # Жёсткая замена блока между маркерами, независимо от пробелов
-          awk '
-            BEGIN { inblk=0 }
+          # Заменить блок в README на собранный
+          awk -v start="$TOC_START" -v end="$TOC_END" '
+            BEGIN {inblk=0}
             {
-              if (index($0,"START:cheatsheets-toc")>0) {
-                print "<!-- START:cheatsheets-toc -->"
-                while ((getline l < "README.new") > 0) print l
-                inblk=1
-                next
-              }
-              if (index($0,"END:cheatsheets-toc")>0) {
-                inblk=0
-                print "<!-- END:cheatsheets-toc -->"
-                next
-              }
+              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
+              if ($0==end)   { inblk=0; next }
               if (!inblk) print
             }
-          ' "$README" > "${README}.tmp" && mv "${README}.tmp" "$README"
+          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs(toc): details blocks with clean TOC (no heading/label)"
+          commit_message: "docs(toc): auto update cheatsheets TOC"
           file_pattern: |
             cheatsheets/**/*.md
             README.md
