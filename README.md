@@ -27,6 +27,83 @@
 
 ### Шпаргалки (`cheatsheets/`) 
 
+<details>
+  <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
+
+<ul>
+<li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%B8-%D1%82%D0%B8%D0%BF%D1%8B-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85">Переменные и типы данных</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D1%8B%D0%B5-%D1%82%D0%B8%D0%BF%D1%8B-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85">Основные типы данных</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D1%81-%D1%87%D0%B8%D1%81%D0%BB%D0%B0%D0%BC%D0%B8">Операции с числами</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D1%80%D0%B5%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%82%D0%B8%D0%BF%D0%BE%D0%B2">Преобразование типов</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%92%D1%8B%D0%B2%D0%BE%D0%B4">Вывод</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%B2%D1%8B%D0%B2%D0%BE%D0%B4">Простой вывод</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%92%D1%8B%D0%B2%D0%BE%D0%B4-%D0%BF%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9">Вывод переменной</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%92%D0%B2%D0%BE%D0%B4">Ввод</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B7%D0%BA%D0%B0-%D0%B4%D0%BB%D1%8F-%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8">Подсказка для ввода строки</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D1%80%D0%B5%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%BD%D1%8B%D1%85-%D1%87%D0%B8%D1%81%D0%B5%D0%BB">Преобразование введенных чисел</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%A1%D1%82%D1%80%D0%BE%D0%BA%D0%B8">Строки</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D1%81%D0%BE-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0%D0%BC%D0%B8">Операции со строками</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%A1%D1%80%D0%B5%D0%B7%D1%8B-%D0%B2-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0%D1%85">Срезы в строках</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D1%82%D1%80%D0%BE%D0%BA">Методы строк</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F">Условия</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#if-%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D0%B5">If условие</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#if--elif--else">If / Elif / Else</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D1%8B-%D1%81%D1%80%D0%B0%D0%B2%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F">Операторы сравнения</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F-%D1%81%D0%BE-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0%D0%BC%D0%B8">Условия со списками</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9B%D0%BE%D0%B3%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D1%8B">Логические операторы</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BA%D0%B8">Списки</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%BD%D0%B0%D0%B4-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0%D0%BC%D0%B8">Операции над списками</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%B8-%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE%D1%83%D1%80%D0%BE%D0%B2%D0%BD%D0%B5%D0%B2%D1%8B%D0%B5-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B8">Переменные и многоуровневые списки</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%A1%D1%80%D0%B5%D0%B7%D1%8B">Срезы</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%BE%D0%B2">Методы списков</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0">Методы поиска</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%98%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D1%80%D1%8F%D0%B4%D0%BA%D0%B0">Изменение порядка</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2">Удаление элементов</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%A6%D0%B8%D0%BA%D0%BB%D1%8B">Циклы</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%B5%D1%80%D0%B5%D0%B1%D0%BE%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0">Перебор списка</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%94%D0%B8%D0%B0%D0%BF%D0%B0%D0%B7%D0%BE%D0%BD-range">Диапазон range()</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%A3%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%86%D0%B8%D0%BA%D0%BB%D0%B0%D0%BC%D0%B8">Управление циклами</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%A1%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D0%B8">Словари</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D1%8C">Простой словарь</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F">Получение значения</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BD%D0%BE%D0%B2%D0%BE%D0%B9-%D0%BF%D0%B0%D1%80%D1%8B">Добавление новой пары</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D0%B5%D0%B9">Методы словарей</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%BD%D0%B0%D0%B4-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D1%8F%D0%BC%D0%B8">Операции над словарями</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%98%D1%82%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8">Итерации</a>
+  <ul>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC-%D0%BA%D0%BB%D1%8E%D1%87%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D0%B5">По парам ключ–значение</a></li>
+    <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE-%D0%B2%D1%81%D0%B5%D0%BC-%D0%BA%D0%BB%D1%8E%D1%87%D0%B0%D0%BC">По всем ключам</a></li>
+  </ul>
+</li>
+<li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE-%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F%D0%BC">По значениям</a></li>
+</ul>
+
+</details>
+
 ### Шаблоны (`templates/`)
 
 * README.md для проектов любого типа
