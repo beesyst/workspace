@@ -28,7 +28,7 @@
 ### Шпаргалки (`cheatsheets/`)
 
 <!-- START:cheatsheets-toc -->
-<!-- START:cheatsheets-toc -->
+<!-- END:cheatsheets-toc -->
 
 ### Шаблоны (`templates/`)
 

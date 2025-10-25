@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '20'
 
-      # 1) Гарантируем плейсхолдеры <!-- START doctoc --> <!-- END doctoc -->
+      # 1) В каждом cheatsheet гарантируем плейсхолдеры <!-- START doctoc --> <!-- END doctoc --> сразу после первого H1
       - name: Ensure doctoc placeholders exist after first H1
         shell: bash
         run: |
@@ -48,46 +48,28 @@ jobs:
             fi
           done
 
-      # 2) Генерим TOC внутрь самих шпаргалок
+      # 2) Генерим TOC внутри самих шпаргалок
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # 3) Собираем сворачиваемые списки в README
-      - name: Inject cheatsheets TOC into README (collapsible)
+      # 3) Собираем сворачиваемые списки в README (строго в один блок между START/END под заголовком "Шпаргалки")
+      - name: Inject cheatsheets TOC into README (collapsible, anchored)
         shell: bash
         run: |
           set -euo pipefail
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
+          ANCHOR='### Шпаргалки (`cheatsheets/`)'
 
-          # Убедимся, что маркеры есть и в одном экземпляре
-          if ! grep -q "$TOC_START" "$README"; then
-            printf "\n%s\n\n%s\n" "$TOC_START" "$TOC_END" >> "$README"
-          fi
-          # Удалим повторные блоки и оставим только первый
-          awk -v s="$TOC_START" -v e="$TOC_END" '
-            $0==s{ if(++n>1) skip=1 } 
-            !skip{ print } 
-            $0==e{ if(n>1){skip=0;n=1} }
-          ' "$README" > README.one && mv README.one "$README"
-
-          TMP="README.new"
-          : > "$TMP"
-          echo "$TOC_START" >> "$TMP"
-          echo >> "$TMP"
-
+          # --- Сформировать контент из doctoc каждого файла
+          TMP="README.new"; : > "$TMP"
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
-            # Заголовок H1 как название, иначе — человеческое имя из имени файла
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
-            if [[ -z "$TITLE" ]]; then
-              BASE="$(basename "$FILE" .md)"
-              TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
-            fi
+            [[ -z "$TITLE" ]] && TITLE="$(basename "$FILE" .md | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
 
-            # Вытаскиваем doctoc-блок, убираем "## Оглавление" и чиним якоря
             TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
               | sed "s|](#|]($REL#|g")"
@@ -101,17 +83,33 @@ jobs:
             } >> "$TMP"
           done
 
-          echo "$TOC_END" >> "$TMP"
+          # --- Снести любые старые/кривые блоки START/END целиком
+          awk -v s="$TOC_START" -v e="$TOC_END" '
+            $0==s {in=1; next}
+            $0==e {in=0; next}
+            !in    {print}
+          ' "$README" > README.clean
 
-          # Подменяем содержимое блока в README на свежесобранное
-          awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN {inblk=0}
-            {
-              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
-              if ($0==end)   { inblk=0; next }
-              if (!inblk) print
+          # --- Убедиться, что под заголовком ANCHOR стоит пустой блок START/END (если нет — вставим)
+          awk -v anchor="$ANCHOR" -v s="$TOC_START" -v e="$TOC_END" '
+            $0==anchor && !done {
+              print
+              print ""
+              print s
+              print ""
+              print e
+              print ""
+              done=1
+              next
             }
-          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+            { print }
+          ' README.clean > README.norm
+
+          # --- Заполнить этот блок сгенерированным контентом
+          awk -v s="$TOC_START" -v e="$TOC_END" '
+            $0==s { print; system("cat README.new"); next }
+            { print }
+          ' README.norm > "$README"
 
       # 4) Коммитим только если были изменения
       - uses: stefanzweifel/git-auto-commit-action@v5
