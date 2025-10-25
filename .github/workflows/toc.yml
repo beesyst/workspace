@@ -1,0 +1,75 @@
+name: Auto Cheatsheets TOC
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+  workflow_dispatch:
+
+jobs:
+  update-toc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Update TOCs inside each cheatsheet
+      - name: Generate TOC in cheatsheets
+        run: |
+          npx -y doctoc workspace/cheatsheets --github --maxlevel 3 --title "## Оглавление"
+
+      # Inject TOCs into README dynamically
+      - name: Inject cheat sheets TOC into README
+        shell: bash
+        run: |
+          set -e
+
+          README="workspace/README.md"
+          TEMP="workspace/README_TMP.md"
+          TOC_BLOCK="<!-- START:cheatsheets-toc -->"
+          TOC_END="<!-- END:cheatsheets-toc -->"
+
+          # Build new TOC block into TEMP file
+          {
+            echo "$TOC_BLOCK"
+            echo
+
+            find workspace/cheatsheets -type f -name "*.md" | sort | while read FILE; do
+              REL="${FILE#workspace/}"
+              NAME="$(basename "$FILE" .md | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')"
+
+              echo "<details>"
+              echo "  <summary><strong><a href=\"$REL\">$NAME</a></strong></summary>"
+              echo
+
+              # Extract doctoc-generated block (without markers)
+              awk '/<!-- START doctoc -->/{flag=1;next}/<!-- END doctoc -->/{flag=0}flag' "$FILE" \
+                | sed "s|(## )|\1|g" \
+                | sed "s|](#|]($REL#|g"
+
+              echo
+              echo "</details>"
+              echo
+            done
+
+            echo "$TOC_END"
+          } > "$TEMP"
+
+          # Replace old block in README
+          awk -v start="$TOC_BLOCK" -v end="$TOC_END" '
+            $0 == start {print; skip=1}
+            !skip {print}
+            $0 == end {skip=0; next}
+          ' "$TEMP" > "$README"
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(cheatsheets): auto update cheatsheets TOC in README [skip ci]"
+          commit_user_name: WorkSpace Bot
+          commit_user_email: bot@workspace.dev
+          file_pattern: |
+            workspace/**.md
