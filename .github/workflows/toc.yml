@@ -24,97 +24,123 @@ jobs:
         with:
           node-version: '20'
 
-      # 1) В каждом cheatsheet гарантируем плейсхолдеры <!-- START doctoc --> <!-- END doctoc --> сразу после первого H1
-      - name: Ensure doctoc placeholders exist after first H1
+      - name: Build collapsible TOC into README (no changes to cheatsheets)
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            if ! grep -q "<!-- START doctoc" "$FILE"; then
-              awk '
-                BEGIN{placed=0}
-                placed==0 && /^# / {
-                  print
-                  print ""
-                  print "<!-- START doctoc -->"
-                  print "<!-- END doctoc -->"
-                  print ""
-                  placed=1
-                  next
-                }
-                { print }
-              ' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-            fi
-          done
 
-      # 2) Генерим TOC внутри самих шпаргалок
-      - name: Generate TOC inside cheatsheets
-        run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
+          python3 - <<'PY'
+          import os, re, subprocess, tempfile, pathlib, shutil
 
-      # 3) Собираем сворачиваемые списки в README (строго в один блок между START/END под заголовком "Шпаргалки")
-      - name: Inject cheatsheets TOC into README (collapsible, anchored)
-        shell: bash
-        run: |
-          set -euo pipefail
-          README="README.md"
-          TOC_START="<!-- START:cheatsheets-toc -->"
-          TOC_END="<!-- END:cheatsheets-toc -->"
-          ANCHOR='### Шпаргалки (`cheatsheets/`)'
+          ROOT = pathlib.Path(".").resolve()
+          CHEATS = ROOT / "cheatsheets"
+          README = ROOT / "README.md"
 
-          # --- Сформировать контент из doctoc каждого файла
-          TMP="README.new"; : > "$TMP"
-          mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            REL="$FILE"
-            TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
-            [[ -z "$TITLE" ]] && TITLE="$(basename "$FILE" .md | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
+          TOC_START = "<!-- START:cheatsheets-toc -->"
+          TOC_END   = "<!-- END:cheatsheets-toc -->"
+          ANCHOR_HDR = "### Шпаргалки (`cheatsheets/`)"
 
-            TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
-              | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
-              | sed "s|](#|]($REL#|g")"
+          def ensure_markers(text:str)->str:
+              """Если блока нет — добавляем сразу после заголовка ANCHOR_HDR, иначе в конец."""
+              if TOC_START in text and TOC_END in text:
+                  return text
+              lines = text.splitlines()
+              out, inserted = [], False
+              for i, line in enumerate(lines):
+                  out.append(line)
+                  if not inserted and line.strip() == ANCHOR_HDR.strip():
+                      out += ["", TOC_START, "", TOC_END, ""]
+                      inserted = True
+              if not inserted:
+                  out += ["", TOC_START, "", TOC_END, ""]
+              return "\n".join(out)
 
-            {
-              echo "<details>"
-              printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
-              printf '%s\n\n' "$TOC_CONTENT"
-              echo "</details>"
-              echo
-            } >> "$TMP"
-          done
+          def first_h1(title_path: pathlib.Path)->str:
+              s = title_path.read_text(encoding="utf-8", errors="ignore")
+              for ln in s.splitlines():
+                  if ln.startswith("# "):
+                      return ln[2:].strip()
+              base = title_path.stem.replace("-", " ")
+              return base[:1].upper() + base[1:]
 
-          # --- Снести любые старые/кривые блоки START/END целиком
-          awk -v s="$TOC_START" -v e="$TOC_END" '
-            $0==s {in=1; next}
-            $0==e {in=0; next}
-            !in    {print}
-          ' "$README" > README.clean
+          def generate_doctoc_for(path: pathlib.Path)->str:
+              """
+              Возвращает markdown между <!-- START doctoc --> и <!-- END doctoc -->
+              Сначала готовим временную копию с плейсхолдерами.
+              """
+              src = path.read_text(encoding="utf-8", errors="ignore")
+              # Вставим плейсхолдеры после первого H1 (только в копии)
+              if "<!-- START doctoc" not in src:
+                  lines = src.splitlines()
+                  out = []
+                  placed = False
+                  for ln in lines:
+                      out.append(ln)
+                      if not placed and ln.startswith("# "):
+                          out += ["", "<!-- START doctoc -->", "<!-- END doctoc -->", ""]
+                          placed = True
+                  src = "\n".join(out)
 
-          # --- Убедиться, что под заголовком ANCHOR стоит пустой блок START/END (если нет — вставим)
-          awk -v anchor="$ANCHOR" -v s="$TOC_START" -v e="$TOC_END" '
-            $0==anchor && !done {
-              print
-              print ""
-              print s
-              print ""
-              print e
-              print ""
-              done=1
-              next
-            }
-            { print }
-          ' README.clean > README.norm
+              with tempfile.TemporaryDirectory() as td:
+                  tmp = pathlib.Path(td) / "copy.md"
+                  tmp.write_text(src, encoding="utf-8")
+                  # Генерим TOC (в копии)
+                  subprocess.run(
+                      ["npx", "-y", "doctoc", str(tmp), "--github", "--maxlevel", "3", "--title", "## Оглавление"],
+                      check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+                  )
+                  gen = tmp.read_text(encoding="utf-8", errors="ignore")
+              # Вырежем содержимое doctoc
+              m = re.search(r"<!-- START doctoc.*?-->(.*?)<!-- END doctoc.*?-->", gen, re.S | re.I)
+              if not m:
+                  return ""
+              body = m.group(1).strip()
+              # уберем первую строку "## Оглавление"/"Table of Contents", если она там есть
+              body = re.sub(r"^\s*##\s+(Оглавление|Table of Contents)\s*\n", "", body, flags=re.I)
+              return body.strip()
 
-          # --- Заполнить этот блок сгенерированным контентом
-          awk -v s="$TOC_START" -v e="$TOC_END" '
-            $0==s { print; system("cat README.new"); next }
-            { print }
-          ' README.norm > "$README"
+          def build_details_block(rel_path:str, title:str, toc_md:str)->str:
+              # префиксуем локальные якоря путём файла
+              toc_md = re.sub(r"\]\(#", f"]({rel_path}#", toc_md)
+              return (
+                  "<details>\n"
+                  f"  <summary><strong><a href=\"{rel_path}\">{title}</a></strong></summary>\n\n"
+                  f"{toc_md}\n\n"
+                  "</details>\n"
+              )
 
-      # 4) Коммитим только если были изменения
-      - uses: stefanzweifel/git-auto-commit-action@v5
+          # Собираем все шпаргалки
+          if not CHEATS.exists():
+              raise SystemExit(0)
+
+          blocks = []
+          for md in sorted(CHEATS.rglob("*.md")):
+              rel = md.as_posix()
+              title = first_h1(md)
+              toc_md = generate_doctoc_for(md)
+              if toc_md:
+                  blocks.append(build_details_block(rel, title, toc_md))
+
+          # Ничего не нашли — тоже выходим без изменений
+          if not blocks:
+              raise SystemExit(0)
+
+          new_block = TOC_START + "\n\n" + "\n".join(blocks) + "\n" + TOC_END
+
+          # Гарантируем наличие маркеров
+          text = README.read_text(encoding="utf-8")
+          text = ensure_markers(text)
+
+          # Подменяем содержимое между маркерами
+          pattern = re.compile(re.escape(TOC_START) + r".*?" + re.escape(TOC_END), re.S)
+          updated = pattern.sub(new_block, text)
+
+          if updated != text:
+              README.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit README if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs(toc): auto update cheatsheets TOC"
-          file_pattern: |
-            cheatsheets/**/*.md
-            README.md
+          file_pattern: README.md
