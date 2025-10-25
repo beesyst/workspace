@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update-toc:
@@ -28,74 +29,73 @@ jobs:
         run: |
           npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # 2) Собрать и внедрить сводный блок по шпаргалкам в README
-      - name: Inject cheatsheets TOC into README
+      # 2) Пересобрать блок в README — ОТКРЫТЫЙ список (без <details> и без заголовка "Оглавление")
+      - name: Rebuild cheatsheets section in README
         shell: bash
         run: |
           set -euo pipefail
-          IFS=$'\n\t'
-
           README="README.md"
-          TOC_START="<!-- START:cheatsheets-toc -->"
-          TOC_END="<!-- END:cheatsheets-toc -->"
+          START="<!-- START:cheatsheets-toc -->"
+          END="<!-- END:cheatsheets-toc -->"
 
-          tmpfile="$(mktemp)"
           {
-            echo "${TOC_START}"
+            echo "$START"
             echo
+            # Обходим все md в cheatsheets
+            while IFS= read -r FILE; do
+              REL="$FILE"
 
-            # Стабильный алфавитный обход всех .md в cheatsheets
-            while IFS= read -r -d '' FILE; do
-              REL="${FILE}"
-              # Название берём из первого H1 (# ...)
-              H1="$(awk -F'# ' '/^# /{print $2; exit}' "$FILE" || true)"
-              if [[ -z "${H1}" ]]; then
-                # Фолбэк: красиво из имени файла
-                base="$(basename "$FILE" .md)"
-                H1="$(echo "$base" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++){ $i=toupper(substr($i,1,1)) substr($i,2)}; print}')"
+              # Заголовок берем из первого H1 в файле, иначе — из имени файла
+              TITLE="$(awk 'match($0,/^# +(.+)/,m){print m[1]; exit}' "$FILE")"
+              if [[ -z "$TITLE" ]]; then
+                BASE="$(basename "$FILE" .md)"
+                TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
               fi
 
-              echo "<details>"
-              echo "  <summary><strong><a href=\"$REL\">$H1</a></strong></summary>"
+              # Первая строка — ссылка на файл
+              echo "- [$TITLE]($REL)"
+
+              # Вырезаем doctoc-блок, убираем сам заголовок "Оглавление" и комментарии,
+              # чиним относительные якоря, делаем список вложенным (два пробела слева)
+              awk '/<!-- START doctoc -->/{p=1;next}/<!-- END doctoc -->/{p=0}p' "$FILE" \
+                | sed -e '1{/^## \([Oo]главление\|[Tt]able of [Cc]ontents\)/d;}' \
+                      -e '/^<!--/d' \
+                | sed 's|](#|]('"$REL"'#|g' \
+                | sed 's/^/  /'
+
               echo
+            done < <(find cheatsheets -type f -name "*.md" | sort)
+            echo "$END"
+          } > __TOC__.md
 
-              # Вырезаем кусок между START/END doctoc,
-              # убираем строку с заголовком 'Оглавление' (##/###), и пустые строки у начала
-              awk '/<!-- START doctoc -->/{flag=1;next}/<!-- END doctoc -->/{flag=0}flag' "$FILE" \
-                | sed -E '/^ *#{2,3} +Оглавление *$/d' \
-                | sed -E ':a;/^[[:space:]]*$/{$d;N;ba}' \
-                | sed 's|](#|]('"$REL"'#|g'
-
-              echo
-              echo "</details>"
-              echo
-            done < <(find cheatsheets -type f -name "*.md" -print0 | sort -z)
-
-            echo "${TOC_END}"
-          } > "$tmpfile"
-
-          # Подменяем содержимое блока в README
-          awk -v start="${TOC_START}" -v end="${TOC_END}" -v SRC="$tmpfile" '
+          # Вклеиваем новый блок в README
+          awk -v start="$START" -v end="$END" -v file="__TOC__.md" '
             BEGIN{inblk=0}
-            {
-              if ($0==start){
-                print; while((getline l < SRC) > 0){print l}; inblk=1; next
-              }
-              if ($0==end){inblk=0}
-              if (!inblk) print
-            }
-          ' "${README}" > README.tmp && mv README.tmp "${README}"
-          rm -f "$tmpfile"
+            $0==start {print; while ((getline l < file)>0) print l; inblk=1; next}
+            $0==end   {inblk=0; next}
+            !inblk    {print}
+          ' "$README" > __README__.md
 
-      # 3) Коммитим, если есть изменения
-      - name: Commit changes
+          mv __README__.md "$README"
+          rm -f __TOC__.md
+
+      # 3) Если есть изменения — открываем/обновляем PR
+      - name: Detect changes
+        id: changes
         run: |
-          if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "docs(toc): auto update cheatsheets TOC"
-            git push
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "No changes."
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Create/Update PR
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/toc-update
+          commit-message: "docs(toc): update cheatsheets TOC"
+          title: "docs(toc): update cheatsheets TOC"
+          body: "Automated update of cheatsheets TOC in README and files."
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          labels: docs, automation
