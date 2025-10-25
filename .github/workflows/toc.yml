@@ -15,91 +15,120 @@ permissions:
 jobs:
   update-toc:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
 
-      # Гарантируем плейсхолдеры doctoc сразу после первого H1
-      - name: Ensure doctoc placeholders exist after first H1
+      # 1) Убедимся, что в README есть единственная пара маркеров под разделом Шпаргалки
+      - name: Normalize README markers (single START/END, insert if missing)
+        shell: bash
+        run: |
+          set -euo pipefail
+          README="README.md"
+          START="<!-- START:cheatsheets-toc -->"
+          END="<!-- END:cheatsheets-toc -->"
+
+          if ! grep -qF "$START" "$README"; then
+            awk -v start="$START" -v end="$END" '
+              BEGIN{inserted=0}
+              /^###[[:space:]]+Шпаргалки *\(`?cheatsheets\/`?\)/ && !inserted {
+                print; print ""; print start; print end; print "";
+                inserted=1; next
+              }
+              { print }
+            ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+          fi
+
+          # Оставляем только первую пару маркеров и выбрасываем любые дубликаты
+          awk -v start="$START" -v end="$END" '
+            BEGIN{seen=0; inblk=0}
+            {
+              if ($0==start){
+                if(seen==0){ print $0; inblk=1; seen=1 }
+                next
+              }
+              if ($0==end){
+                if(inblk==1){ print $0; inblk=0 }
+                next
+              }
+              if(inblk==0) print
+            }
+          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+
+      # 2) В каждом cheatsheet — placeholder doctoc сразу после H1 (если ещё нет)
+      - name: Ensure doctoc placeholders after first H1
         shell: bash
         run: |
           set -euo pipefail
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            if ! grep -q "<!-- START doctoc" "$FILE"; then
+          for F in "${FILES[@]}"; do
+            if ! grep -q "START doctoc" "$F"; then
               awk '
-                BEGIN{placed=0}
-                placed==0 && /^# / {
-                  print
-                  print ""
-                  print "<!-- START doctoc -->"
-                  print "<!-- END doctoc -->"
-                  print ""
-                  placed=1
-                  next
+                BEGIN{done=0}
+                done==0 && /^# /{
+                  print; print ""; print "<!-- START doctoc -->"; print "<!-- END doctoc -->"; print ""; done=1; next
                 }
-                { print }
-              ' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+                {print}
+              ' "$F" > "$F.tmp" && mv "$F.tmp" "$F"
             fi
           done
 
-      # Генерим TOC внутри шпаргалок
-      - name: Generate TOC inside cheatsheets
+      # 3) Сгенерировать doctoc внутри всех cheatsheets
+      - name: Generate TOC in cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # Вставляем разворачиваемые списки в README (details), без "— оглавление"
-      - name: Inject cheatsheets TOC into README
+      # 4) Собрать раскрывающийся список в README
+      - name: Inject cheatsheets TOC into README (<details> with inner toc)
         shell: bash
         run: |
           set -euo pipefail
-
           README="README.md"
-          TOC_START="<!-- START:cheatsheets-toc -->"
-          TOC_END="<!-- END:cheatsheets-toc -->"
+          START="<!-- START:cheatsheets-toc -->"
+          END="<!-- END:cheatsheets-toc -->"
 
-          TMP="README.new"
-          : > "$TMP"
-          echo "$TOC_START" >> "$TMP"
-          echo >> "$TMP"
+          TMP="README.new"; : > "$TMP"
 
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            REL="$FILE"
-            # Заголовок из первого H1
-            TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
+          for F in "${FILES[@]}"; do
+            REL="$F"
+            TITLE="$(grep -m1 -E '^# ' "$F" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
-              BASE="$(basename "$FILE" .md)"
-              TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
+              BASE="$(basename "$F" .md)"; TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # ВАЖНО: ловим длинные doctoc-маркеры по префиксу!
-            TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
-              | sed "s|](#|]($REL#|g")"
+            # Вырезаем doctoc-блок: и короткий, и «generated TOC…»
+            TOC="$(awk '
+              /<!--[[:space:]]*START[[:space:]]+doctoc/ {on=1; next}
+              /<!--[[:space:]]*END[[:space:]]+doctoc/   {on=0}
+              on {print}
+            ' "$F" \
+              | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/d;}' \
+              | sed -E "/^<!--/d" \
+              | sed -E "s#\\]\\(#\\]\\($REL#"#)"
 
             {
               echo "<details>"
               printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
-              printf '%s\n\n' "$TOC_CONTENT"
+              printf '%s\n\n' "$TOC"
               echo "</details>"
               echo
             } >> "$TMP"
           done
 
-          # Подменяем блок в README
-          awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN {inblk=0}
+          # Подменяем содержимое между маркерами на наш контент
+          awk -v start="$START" -v end="$END" '
+            BEGIN{inblk=0; wrote=0}
             {
-              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
-              if ($0==end)   { inblk=0; next }
-              if (!inblk) print
+              if($0==start && wrote==0){
+                print start
+                while((getline l<"README.new")>0) print l
+                inblk=1; wrote=1; next
+              }
+              if($0==end && inblk==1){ inblk=0; print end; next }
+              if(inblk==0) print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 

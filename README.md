@@ -30,17 +30,6 @@
 <!-- START:cheatsheets-toc -->
 <!-- START:cheatsheets-toc -->
 
-<details>
-  <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
-
-
-</details>
-
-<!-- END:cheatsheets-toc -->
-<!-- START:cheatsheets-toc -->
-<!-- END:cheatsheets-toc -->
-<!-- END:cheatsheets-toc -->
-
 ### Шаблоны (`templates/`)
 
 * README.md для проектов любого типа
