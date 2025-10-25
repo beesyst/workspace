@@ -1,55 +1,7 @@
 # Python Основы
 
-## Оглавление
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Оглавление
-
-- [Переменные и типы данных](#%D0%9F%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%B8-%D1%82%D0%B8%D0%BF%D1%8B-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
-  - [Основные типы данных](#%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D1%8B%D0%B5-%D1%82%D0%B8%D0%BF%D1%8B-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85)
-  - [Операции с числами](#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D1%81-%D1%87%D0%B8%D1%81%D0%BB%D0%B0%D0%BC%D0%B8)
-  - [Преобразование типов](#%D0%9F%D1%80%D0%B5%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%82%D0%B8%D0%BF%D0%BE%D0%B2)
-- [Вывод](#%D0%92%D1%8B%D0%B2%D0%BE%D0%B4)
-  - [Простой вывод](#%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%B2%D1%8B%D0%B2%D0%BE%D0%B4)
-  - [Вывод переменной](#%D0%92%D1%8B%D0%B2%D0%BE%D0%B4-%D0%BF%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9)
-- [Ввод](#%D0%92%D0%B2%D0%BE%D0%B4)
-  - [Подсказка для ввода строки](#%D0%9F%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B7%D0%BA%D0%B0-%D0%B4%D0%BB%D1%8F-%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8)
-  - [Преобразование введенных чисел](#%D0%9F%D1%80%D0%B5%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%BD%D1%8B%D1%85-%D1%87%D0%B8%D1%81%D0%B5%D0%BB)
-- [Строки](#%D0%A1%D1%82%D1%80%D0%BE%D0%BA%D0%B8)
-  - [Операции со строками](#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D1%81%D0%BE-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0%D0%BC%D0%B8)
-  - [Срезы в строках](#%D0%A1%D1%80%D0%B5%D0%B7%D1%8B-%D0%B2-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0%D1%85)
-  - [Методы строк](#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D1%82%D1%80%D0%BE%D0%BA)
-- [Условия](#%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F)
-  - [If условие](#if-%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D0%B5)
-  - [If / Elif / Else](#if--elif--else)
-  - [Операторы сравнения](#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D1%8B-%D1%81%D1%80%D0%B0%D0%B2%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F)
-  - [Условия со списками](#%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F-%D1%81%D0%BE-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0%D0%BC%D0%B8)
-  - [Логические операторы](#%D0%9B%D0%BE%D0%B3%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D1%8B)
-- [Списки](#%D0%A1%D0%BF%D0%B8%D1%81%D0%BA%D0%B8)
-  - [Операции над списками](#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%BD%D0%B0%D0%B4-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0%D0%BC%D0%B8)
-  - [Переменные и многоуровневые списки](#%D0%9F%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%B8-%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE%D1%83%D1%80%D0%BE%D0%B2%D0%BD%D0%B5%D0%B2%D1%8B%D0%B5-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B8)
-  - [Срезы](#%D0%A1%D1%80%D0%B5%D0%B7%D1%8B)
-  - [Методы списков](#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%BE%D0%B2)
-  - [Методы поиска](#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0)
-  - [Изменение порядка](#%D0%98%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D1%80%D1%8F%D0%B4%D0%BA%D0%B0)
-  - [Удаление элементов](#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2)
-- [Циклы](#%D0%A6%D0%B8%D0%BA%D0%BB%D1%8B)
-  - [Перебор списка](#%D0%9F%D0%B5%D1%80%D0%B5%D0%B1%D0%BE%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0)
-  - [Диапазон range()](#%D0%94%D0%B8%D0%B0%D0%BF%D0%B0%D0%B7%D0%BE%D0%BD-range)
-  - [Управление циклами](#%D0%A3%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%86%D0%B8%D0%BA%D0%BB%D0%B0%D0%BC%D0%B8)
-- [Словари](#%D0%A1%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D0%B8)
-  - [Простой словарь](#%D0%9F%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D1%8C)
-  - [Получение значения](#%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F)
-  - [Добавление новой пары](#%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BD%D0%BE%D0%B2%D0%BE%D0%B9-%D0%BF%D0%B0%D1%80%D1%8B)
-  - [Методы словарей](#%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D0%B5%D0%B9)
-  - [Операции над словарями](#%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%BD%D0%B0%D0%B4-%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D1%8F%D0%BC%D0%B8)
-- [Итерации](#%D0%98%D1%82%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%B8)
-  - [По парам ключ–значение](#%D0%9F%D0%BE-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC-%D0%BA%D0%BB%D1%8E%D1%87%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D0%B5)
-  - [По всем ключам](#%D0%9F%D0%BE-%D0%B2%D1%81%D0%B5%D0%BC-%D0%BA%D0%BB%D1%8E%D1%87%D0%B0%D0%BC)
-- [По значениям](#%D0%9F%D0%BE-%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F%D0%BC)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- START doctoc -->
+<!-- END doctoc -->
 
 ---
 

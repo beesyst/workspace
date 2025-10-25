@@ -1,43 +1,49 @@
 name: Auto Cheatsheets TOC
 
 on:
-  workflow_dispatch:      # запуск вручную из вкладки Actions
-  push:                   # временно от любого пуша, без фильтра
-    branches: [ main ]
+  workflow_dispatch:          # запуск вручную
+  push:
+    branches: [ main ]        # или сузить до paths: ['cheatsheets/**', 'README.md']
 
 permissions:
-  contents: write         # нужно для автокоммита изменений
+  contents: write
+  pull-requests: write        # нужно для создания/обновления PR
 
 jobs:
   update-toc:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 1) TOC внутри каждой шпаргалки (ВАЖНО: путь без префикса workspace/)
+      # 1) Сгенерировать TOC внутри каждой шпаргалки
       - name: Generate TOC in cheatsheets
         run: |
           npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # 2) Вставка TOC в README как свернутый блок
+      # 2) Вставить сводный TOC в README (между маркерами)
       - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
           set -e
+
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
-          {
-            echo "${TOC_START}"
-            echo
-            find cheatsheets -type f -name "*.md" | sort | while read FILE; do
-              REL="$FILE"
-              NAME="$(basename "$FILE" .md | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')"
+          # Собираем ТОЛЬКО контент (без собственных маркеров)
+          : > CONTENT.tmp
+          find cheatsheets -type f -name "*.md" | sort | while read FILE; do
+            REL="$FILE"
+            NAME="$(basename "$FILE" .md | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')"
+
+            {
               echo "<details>"
               echo "  <summary><strong><a href=\"$REL\">$NAME</a></strong> — оглавление</summary>"
               echo
@@ -46,20 +52,36 @@ jobs:
               echo
               echo "</details>"
               echo
-            done
-            echo "${TOC_END}"
-          } > README.new
+            } >> CONTENT.tmp
+          done
 
-          awk -v start="${TOC_START}" -v end="${TOC_END}" '
-            BEGIN{inblk=0}
-            {
-              if ($0==start){print; while(getline l<"README.new"){print l}; inblk=1; next}
-              if ($0==end){inblk=0}
-              if (!inblk) print
-            }
-          ' "${README}" > README.tmp && mv README.tmp "${README}"
+          # Подменяем блок в README
+          awk -v start="$TOC_START" -v end="$TOC_END" '
+            BEGIN {inblk=0}
+            $0==start {print; while ((getline line < "CONTENT.tmp") > 0) print line; inblk=1; next}
+            $0==end   {inblk=0; print; next}
+            !inblk    {print}
+          ' "$README" > README.tmp && mv README.tmp "$README"
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      # 3) Определить — есть ли изменения
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            git add -A
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 4) Создать/обновить PR с апдейтом TOC (вместо прямого пуша в main)
+      - name: Create/Update PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: "docs(toc): auto update cheatsheets TOC in README [skip ci]"
-          file_pattern: "**/*.md"
+          branch: bot/toc-update
+          title: "docs: update TOC"
+          commit-message: "docs(toc): auto-update TOC"
+          body: "This PR updates generated tables of contents in cheatsheets and README."
+          labels: docs, automation, toc
+          signoff: false
