@@ -1,4 +1,3 @@
-# workspace/.github/workflows/toc.yml
 name: Auto Cheatsheets TOC
 
 on:
@@ -54,28 +53,26 @@ jobs:
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # Формируем ОТКРЫТЫЙ список в README — без <details> и без строки "Оглавление"
-      - name: Inject cheatsheets TOC into README (open list)
+      # Собираем свернутые блоки (<details>) с чистым списком без слова "Оглавление"
+      - name: Inject cheatsheets TOC into README (details, clean)
         shell: bash
         run: |
           set -euo pipefail
-
           README="README.md"
-          TMP="README.list"
+          TMP="README.new"
           : > "$TMP"
 
-          # Собираем все шпаргалки
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
-            # Заголовок H1 как название (или fallback из имени файла)
+            # Название из первого H1 (или fallback из имени файла)
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Тело doctoc: убираем первую строку "## Оглавление" и HTML-комменты, чиним якоря
+            # Докток-контент: выбрасываем первую строку "## Оглавление" и комментарии, чиним якоря
             TOC_CONTENT="$(
               awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
@@ -83,26 +80,22 @@ jobs:
               | sed "s|](#|]($REL#|g"
             )"
 
-            # Родительский пункт
-            echo "- [$TITLE]($REL)" >> "$TMP"
-            # Пустая строка — чтобы GitHub корректно отрисовал вложенный список
-            echo >> "$TMP"
-
-            # Вложенный список: 4 пробела отступ
-            if [[ -n "$TOC_CONTENT" ]]; then
-              printf '%s\n' "$TOC_CONTENT" | sed 's/^/    /' >> "$TMP"
-              echo >> "$TMP"
-            fi
+            {
+              echo "<details>"
+              printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
+              printf '%s\n\n' "$TOC_CONTENT"
+              echo "</details>"
+              echo
+            } >> "$TMP"
           done
 
-          # Жёсткая замена содержимого между маркерами.
-          # Ищем маркеры по подстроке — любые пробелы/форматирование не мешают.
+          # Жёсткая замена блока между маркерами, независимо от пробелов
           awk '
             BEGIN { inblk=0 }
             {
               if (index($0,"START:cheatsheets-toc")>0) {
                 print "<!-- START:cheatsheets-toc -->"
-                while ((getline l < "README.list") > 0) print l
+                while ((getline l < "README.new") > 0) print l
                 inblk=1
                 next
               }
@@ -113,14 +106,12 @@ jobs:
               }
               if (!inblk) print
             }
-          ' "$README" > "${README}.tmp"
-
-          mv "${README}.tmp" "$README"
+          ' "$README" > "${README}.tmp" && mv "${README}.tmp" "$README"
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs(toc): open TOC list in README (no <details>)"
+          commit_message: "docs(toc): details blocks with clean TOC (no heading/label)"
           file_pattern: |
             cheatsheets/**/*.md
             README.md
