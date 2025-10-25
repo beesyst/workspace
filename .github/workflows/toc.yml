@@ -11,19 +11,20 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   update-toc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
+        with:
+          node-version: '20'
 
-      # Гарантируем плейсхолдеры doctoc после первого H1
+      # 1) Гарантируем плейсхолдеры <!-- START doctoc --> <!-- END doctoc -->
       - name: Ensure doctoc placeholders exist after first H1
         shell: bash
         run: |
@@ -33,18 +34,26 @@ jobs:
             if ! grep -q "<!-- START doctoc" "$FILE"; then
               awk '
                 BEGIN{placed=0}
-                placed==0 && /^# / { print; print ""; print "<!-- START doctoc -->"; print "<!-- END doctoc -->"; print ""; placed=1; next }
+                placed==0 && /^# / {
+                  print
+                  print ""
+                  print "<!-- START doctoc -->"
+                  print "<!-- END doctoc -->"
+                  print ""
+                  placed=1
+                  next
+                }
                 { print }
               ' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
             fi
           done
 
-      # Генерация TOC в самих шпаргалках
-      - name: Generate TOC in cheatsheets
+      # 2) Генерим TOC внутрь самих шпаргалок
+      - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # Сводка в README (скрывающиеся <details>, без слова "Оглавление" в summary)
-      - name: Inject cheatsheets TOC into README
+      # 3) Собираем сворачиваемые списки в README
+      - name: Inject cheatsheets TOC into README (collapsible)
         shell: bash
         run: |
           set -euo pipefail
@@ -52,45 +61,62 @@ jobs:
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
-          TMP="$(mktemp)"
-          {
-            echo "$TOC_START"
-            echo
-            mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-            for FILE in "${FILES[@]}"; do
-              REL="$FILE"
-              TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
-              [[ -z "$TITLE" ]] && TITLE="$(basename "$FILE" .md | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
+          # Убедимся, что маркеры есть и в одном экземпляре
+          if ! grep -q "$TOC_START" "$README"; then
+            printf "\n%s\n\n%s\n" "$TOC_START" "$TOC_END" >> "$README"
+          fi
+          # Удалим повторные блоки и оставим только первый
+          awk -v s="$TOC_START" -v e="$TOC_END" '
+            $0==s{ if(++n>1) skip=1 } 
+            !skip{ print } 
+            $0==e{ if(n>1){skip=0;n=1} }
+          ' "$README" > README.one && mv README.one "$README"
 
-              TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
-                | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
-                | sed -E '/^<!--/d' \
-                | sed "s|](#|]($REL#|g")"
+          TMP="README.new"
+          : > "$TMP"
+          echo "$TOC_START" >> "$TMP"
+          echo >> "$TMP"
 
+          mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
+          for FILE in "${FILES[@]}"; do
+            REL="$FILE"
+            # Заголовок H1 как название, иначе — человеческое имя из имени файла
+            TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
+            if [[ -z "$TITLE" ]]; then
+              BASE="$(basename "$FILE" .md)"
+              TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
+            fi
+
+            # Вытаскиваем doctoc-блок, убираем "## Оглавление" и чиним якоря
+            TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
+              | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
+              | sed "s|](#|]($REL#|g")"
+
+            {
               echo "<details>"
               printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
-              [[ -n "$TOC_CONTENT" ]] && { printf '%s\n\n' "$TOC_CONTENT"; } || echo
+              printf '%s\n\n' "$TOC_CONTENT"
               echo "</details>"
               echo
-            done
-            echo "$TOC_END"
-          } > "$TMP"
+            } >> "$TMP"
+          done
 
-          awk -v start="$TOC_START" -v end="$TOC_END" -v f="$TMP" '
-            BEGIN{inblk=0}
+          echo "$TOC_END" >> "$TMP"
+
+          # Подменяем содержимое блока в README на свежесобранное
+          awk -v start="$TOC_START" -v end="$TOC_END" '
+            BEGIN {inblk=0}
             {
-              if ($0==start) { print; while((getline l<f)>0) print l; inblk=1; next }
-              if ($0==end) { inblk=0; next }
+              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
+              if ($0==end)   { inblk=0; next }
               if (!inblk) print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 
-      - name: Create/Update PR
-        uses: peter-evans/create-pull-request@v6
+      # 4) Коммитим только если были изменения
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: bot/toc-update
-          commit-message: "docs(toc): auto update cheatsheets TOC"
-          title: "docs(toc): auto update cheatsheets TOC"
-          body: "Automated TOC update by GitHub Actions."
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          labels: docs, automation
+          commit_message: "docs(toc): auto update cheatsheets TOC"
+          file_pattern: |
+            cheatsheets/**/*.md
+            README.md
