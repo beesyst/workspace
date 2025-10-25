@@ -16,92 +16,86 @@ permissions:
 jobs:
   update-toc:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Ensure doctoc placeholders exist after first H1
-        shell: bash
+      # 1) Сгенерировать TOC внутри всех шпаргалок
+      - name: Generate TOC in cheatsheets
         run: |
-          set -euo pipefail
-          mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            if ! grep -q "<!-- START doctoc" "$FILE"; then
-              awk '
-                BEGIN{placed=0}
-                placed==0 && /^# / {
-                  print
-                  print ""
-                  print "<!-- START doctoc -->"
-                  print "<!-- END doctoc -->"
-                  print ""
-                  placed=1
-                  next
-                }
-                { print }
-              ' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-            fi
-          done
+          npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      - name: Generate TOC inside cheatsheets
-        run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
-
+      # 2) Собрать и внедрить сводный блок по шпаргалкам в README
       - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
           set -euo pipefail
+          IFS=$'\n\t'
 
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
-          TMP="README.new"
-          : > "$TMP"
-          echo "$TOC_START" >> "$TMP"
-          echo >> "$TMP"
+          tmpfile="$(mktemp)"
+          {
+            echo "${TOC_START}"
+            echo
 
-          # Собираем список шпаргалок
-          mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
-          for FILE in "${FILES[@]}"; do
-            REL="$FILE"
-            TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
+            # Стабильный алфавитный обход всех .md в cheatsheets
+            while IFS= read -r -d '' FILE; do
+              REL="${FILE}"
+              # Название берём из первого H1 (# ...)
+              H1="$(awk -F'# ' '/^# /{print $2; exit}' "$FILE" || true)"
+              if [[ -z "${H1}" ]]; then
+                # Фолбэк: красиво из имени файла
+                base="$(basename "$FILE" .md)"
+                H1="$(echo "$base" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++){ $i=toupper(substr($i,1,1)) substr($i,2)}; print}')"
+              fi
 
-            # Извлечь блок doctoc и префиксить локальные якоря путём файла
-            TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" | sed "s|](#|]($REL#|g")"
-
-            {
               echo "<details>"
-              printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
-              printf '%s\n\n' "$TOC_CONTENT"
+              echo "  <summary><strong><a href=\"$REL\">$H1</a></strong></summary>"
+              echo
+
+              # Вырезаем кусок между START/END doctoc,
+              # убираем строку с заголовком 'Оглавление' (##/###), и пустые строки у начала
+              awk '/<!-- START doctoc -->/{flag=1;next}/<!-- END doctoc -->/{flag=0}flag' "$FILE" \
+                | sed -E '/^ *#{2,3} +Оглавление *$/d' \
+                | sed -E ':a;/^[[:space:]]*$/{$d;N;ba}' \
+                | sed 's|](#|]('"$REL"'#|g'
+
+              echo
               echo "</details>"
               echo
-            } >> "$TMP"
-          done
+            done < <(find cheatsheets -type f -name "*.md" -print0 | sort -z)
 
-          echo "$TOC_END" >> "$TMP"
+            echo "${TOC_END}"
+          } > "$tmpfile"
 
-          # Заменить блок в README на собранный
-          awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN {inblk=0}
+          # Подменяем содержимое блока в README
+          awk -v start="${TOC_START}" -v end="${TOC_END}" -v SRC="$tmpfile" '
+            BEGIN{inblk=0}
             {
-              if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
-              if ($0==end)   { inblk=0; next }
+              if ($0==start){
+                print; while((getline l < SRC) > 0){print l}; inblk=1; next
+              }
+              if ($0==end){inblk=0}
               if (!inblk) print
             }
-          ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
+          ' "${README}" > README.tmp && mv README.tmp "${README}"
+          rm -f "$tmpfile"
 
+      # 3) Коммитим, если есть изменения
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "docs(toc): auto update cheatsheets TOC"
-          file_pattern: |
-            cheatsheets/**/*.md
-            README.md
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "docs(toc): auto update cheatsheets TOC"
+            git push
+          else
+            echo "No changes."
+          fi
