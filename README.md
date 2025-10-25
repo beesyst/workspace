@@ -25,7 +25,7 @@
 
 ## Компоненты WorkSpace
 
-### Шпаргалки (`cheatsheets/`)
+### Шпаргалки (`cheatsheets/`) 
 
 <!-- START:cheatsheets-toc -->
 <!-- END:cheatsheets-toc -->
