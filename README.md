@@ -27,9 +27,6 @@
 
 ### Шпаргалки (`cheatsheets/`) 
 
-<!-- START:cheatsheets-toc -->
-<!-- END:cheatsheets-toc -->
-
 ### Шаблоны (`templates/`)
 
 * README.md для проектов любого типа
