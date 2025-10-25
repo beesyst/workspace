@@ -59,7 +59,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           README="README.md"
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
@@ -69,7 +68,6 @@ jobs:
           echo "$TOC_START" >> "$TMP"
           echo >> "$TMP"
 
-          # Собираем список шпаргалок
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
@@ -79,18 +77,14 @@ jobs:
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Берём doctoc-контент, убираем строку "## Оглавление" и комментарии, чинём якоря
             TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
               | sed -E '1{/^##[[:space:]]+(Оглавление|Table of Contents)$/Id;}' \
               | sed -E '/^<!--/d' \
               | sed "s|](#|]($REL#|g")"
 
-            # Верхний пункт – ссылка на файл
             echo "- [$TITLE]($REL)" >> "$TMP"
-            # Пустая строка обязателена, чтобы GitHub показал вложенный список как дочерний
             echo >> "$TMP"
 
-            # Вложенный список (если есть)
             if [[ -n "$TOC_CONTENT" ]]; then
               printf '%s\n' "$TOC_CONTENT" | sed 's/^/  /' >> "$TMP"
               echo >> "$TMP"
@@ -99,25 +93,22 @@ jobs:
 
           echo "$TOC_END" >> "$TMP"
 
-          # Подменяем блок в README на новый
           awk -v start="$TOC_START" -v end="$TOC_END" '
             BEGIN {inblk=0}
             {
               if ($0==start) { print; while ((getline l < "README.new") > 0) print l; inblk=1; next }
-              if ($0==end)   { inblk=0; next }
+              if ($0==end)   { inblk=0; print; next }
               if (!inblk) print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
 
-          # На всякий случай подчистим любые <details> внутри блока (если вдруг сохранились)
+          # Чистим любые <details>/<summary> внутри блока на всякий случай
           awk -v start="$TOC_START" -v end="$TOC_END" '
-            BEGIN{in=0}
+            BEGIN{inblk=0}
             {
-              if ($0==start) {in=1; print; next}
-              if ($0==end)   {in=0; print; next}
-              if (in==1) {
-                gsub(/<details>|<\/details>|<summary>|<\/summary>/,"")
-              }
+              if ($0==start) {inblk=1; print; next}
+              if ($0==end)   {inblk=0; print; next}
+              if (inblk==1) { gsub(/<details>|<\/details>|<summary>|<\/summary>/,"") }
               print
             }
           ' "$README" > "$README.tmp" && mv "$README.tmp" "$README"
