@@ -103,11 +103,8 @@ jobs:
             [ -z "$TITLE" ] && TITLE="$(basename "$FILE" .md | sed 's/-/ /g; s/^[a-z]/\u&/')"
 
             # вытащим doctoc-блок; первую строку "## Оглавление" уберём
-            TOC_CONTENT="$(
-              awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
-              | sed -E '/^#{1,6}[[:space:]]*(Оглавление|Table of Contents)[[:space:]]*$/Id' \
-              | sed -E '1{/^[[:space:]]*$/d;}'
-            )"
+            TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" | sed '1{/^##[[:space:]]/d;}')"
+
             {
               echo "<details>"
               printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
