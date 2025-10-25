@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: '20'
 
+      # Гарантируем плейсхолдеры doctoc сразу после первого H1
       - name: Ensure doctoc placeholders exist after first H1
         shell: bash
         run: |
@@ -50,9 +51,11 @@ jobs:
             fi
           done
 
+      # Генерим TOC внутри шпаргалок
       - name: Generate TOC inside cheatsheets
         run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
+      # Вставляем разворачиваемые списки в README (details), без "— оглавление"
       - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
@@ -67,23 +70,22 @@ jobs:
           echo "$TOC_START" >> "$TMP"
           echo >> "$TMP"
 
-          # Собираем список шпаргалок
           mapfile -t FILES < <(find cheatsheets -type f -name '*.md' | sort)
           for FILE in "${FILES[@]}"; do
             REL="$FILE"
+            # Заголовок из первого H1
             TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# \+//; s/\r$//')"
             if [[ -z "$TITLE" ]]; then
               BASE="$(basename "$FILE" .md)"
               TITLE="$(echo "$BASE" | sed 's/-/ /g; s/\b\(.\)/\u\1/g')"
             fi
 
-            # Извлекаем doctoc-блок как есть и префиксим локальные якоря путём файла
-            TOC_CONTENT="$(awk '/<!-- START doctoc -->/{f=1;next} /<!-- END doctoc -->/{f=0} f' "$FILE" \
+            # ВАЖНО: ловим длинные doctoc-маркеры по префиксу!
+            TOC_CONTENT="$(awk '/<!-- START doctoc/{f=1;next} /<!-- END doctoc/{f=0} f' "$FILE" \
               | sed "s|](#|]($REL#|g")"
 
             {
               echo "<details>"
-              # ВАЖНО: пустая строка после summary нужна для корректного рендера GitHub
               printf '  <summary><strong><a href="%s">%s</a></strong></summary>\n\n' "$REL" "$TITLE"
               printf '%s\n\n' "$TOC_CONTENT"
               echo "</details>"
@@ -91,7 +93,7 @@ jobs:
             } >> "$TMP"
           done
 
-          # Заменить блок в README на собранный
+          # Подменяем блок в README
           awk -v start="$TOC_START" -v end="$TOC_END" '
             BEGIN {inblk=0}
             {
