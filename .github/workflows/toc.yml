@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'cheatsheets/**/*.md'        # ловим все md в подпапках
+      - 'cheatsheets/**/*.md'
       - 'README.md'
       - '.github/workflows/toc.yml'
   workflow_dispatch:
@@ -24,43 +24,16 @@ jobs:
         with:
           node-version: '20'
 
-      # 0) Гарантируем, что во всех шпаргалках есть маркеры doctoc.
-      # Вставляем блок-маркеры сразу ПОСЛЕ первой строки H1 (# ...),
-      # если их там ещё нет. Так doctoc всегда будет что обновлять.
-      - name: Ensure doctoc placeholders exist
-        shell: bash
-        run: |
-          set -euo pipefail
-          files=$(git ls-files 'cheatsheets/**/*.md')
-          for f in $files; do
-            if ! grep -q '<!-- START doctoc' "$f"; then
-              awk '
-                BEGIN{ins=0}
-                /^# / && !ins {
-                  print
-                  print ""
-                  print "<!-- START doctoc generated TOC please keep comment here to allow auto update -->"
-                  print "<!-- DON'\''T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->"
-                  print "## Оглавление"
-                  print ""
-                  print "<!-- END doctoc generated TOC please keep comment here to allow auto update -->"
-                  print ""
-                  ins=1
-                  next
-                }
-                { print }
-              ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
-            fi
-          done
-
-      # 1) Сгенерировать/обновить TOC внутри всех шпаргалок
+      # 1) Добавляем/обновляем TOC внутри всех шпаргалок (рекурсивно)
+      # doctoc сам вставит блок между маркерами, а если их нет — добавит.
       - name: Generate TOC in cheatsheets
-        run: npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
+        run: |
+          npx -y doctoc cheatsheets --github --maxlevel 3 --title "## Оглавление"
 
-      # 2) Сформировать свернутые разделы в README.
-      #   - Заголовок берём из первого H1 каждого файла.
-      #   - Не добавляем слово "оглавление" в summary.
-      #   - Внутри details показываем ТОЛЬКО список (без "## Оглавление").
+      # 2) Собираем сводный список для README
+      #    - Заголовок берём из первой строки H1 файла
+      #    - Без слова "оглавление" в summary
+      #    - Внутри details просто список из doctoc (без заголовка)
       - name: Inject cheatsheets TOC into README
         shell: bash
         run: |
@@ -69,51 +42,54 @@ jobs:
           TOC_START="<!-- START:cheatsheets-toc -->"
           TOC_END="<!-- END:cheatsheets-toc -->"
 
+          # Сгенерировать блок
           {
             echo "${TOC_START}"
             echo
-            # Найдём все шпаргалки упорядоченно
-            git ls-files 'cheatsheets/**/*.md' | sort | while read -r FILE; do
+            find cheatsheets -type f -name "*.md" | sort | while read -r FILE; do
               REL="$FILE"
-              # Заголовок берём из первого H1. Фолбэк — красивое имя из файла.
-              TITLE="$(grep -m1 '^# ' "$FILE" | sed 's/^# //')"
-              if [ -z "$TITLE" ]; then
-                TITLE="$(basename "$FILE" .md | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')"
-              fi
+
+              # Заголовок из H1
+              TITLE="$(grep -m1 -E '^# ' "$FILE" | sed 's/^# *//')"
+              [ -z "$TITLE" ] && TITLE="$(basename "$FILE" .md)"
 
               echo "<details>"
               echo "  <summary><strong><a href=\"$REL\">$TITLE</a></strong></summary>"
               echo
 
-              # Достаём содержимое блока doctoc МЕЖДУ маркерами,
-              # но пропускаем заголовок "## Оглавление" и пустую строку после него.
+              # Вырезаем СОДЕРЖИМОЕ doctoc (между маркерами), без заголовка
+              # и чиним локальные якоря (добавляем префикс файла).
               awk '
-                /<!-- START doctoc/ { emit=1; skip=2; next }
-                /<!-- END doctoc/   { emit=0 }
-                emit {
-                  if (skip>0) { skip--; next }
-                  print
-                }
-              ' "$FILE" | sed "s|](#|]($REL#|g"
+                /<!-- START doctoc -->/ { capture=1; next }
+                /<!-- END doctoc -->/   { capture=0 }
+                capture
+              ' "$FILE" \
+              | sed '1,/^[-*] \[/ s/^.*$//' \    # убрать первую строчку типа "## Оглавление" (если вдруг попала)
+              | sed "s|](#|]($REL#|g"
 
               echo
               echo "</details>"
               echo
             done
             echo "${TOC_END}"
-          } > README.__toc_block
+          } > README.__toc.new
 
-          # Вклеим новый блок вместо старого
+          # Вставляем блок в README между метками
           awk -v start="${TOC_START}" -v end="${TOC_END}" '
             BEGIN{inblk=0}
             {
-              if ($0==start) { print; while(getline l<"README.__toc_block"){print l}; inblk=1; next }
-              if ($0==end)   { inblk=0 }
+              if ($0==start){
+                print
+                while (getline l < "README.__toc.new") print l
+                inblk=1
+                next
+              }
+              if ($0==end){ inblk=0 }
               if (!inblk) print
             }
-          ' "${README}" > README.tmp && mv README.tmp "${README}"
+          ' "${README}" > README.__tmp && mv README.__tmp "${README}"
 
-      # 3) Если что-то поменялось — создаём/обновляем PR
+      # 3) Если что-то поменялось — открываем/обновляем PR (чтобы не ломать тебе push)
       - name: Detect changes
         id: changes
         run: |
@@ -128,8 +104,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: bot/toc-update
-          commit-message: "docs(toc): auto update TOC"
-          title: "docs(toc): auto update TOC"
-          body: "Automated TOC update by GitHub Actions."
+          commit-message: "docs(toc): auto update TOC [skip ci]"
+          title: "docs(toc): авто-обновление оглавлений"
+          body: "Автоматическое обновление оглавлений в шпаргалках и README."
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           labels: docs, automation
