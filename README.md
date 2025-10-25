@@ -30,43 +30,11 @@
 <!-- START:cheatsheets-toc -->
 <!-- START:cheatsheets-toc -->
 
-### Шаблоны (`templates/`)
+<details>
+  <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
 
-* README.md для проектов любого типа
-* CHANGELOG по стандартам
-* GitHub Workflows (CI/CD)
-* Issue & PR templates
-* Стандарты оформления версии (`version.txt`)
 
-### Инструменты (`tools/`)
+</details>
 
-* Автоматизация оформления коммитов
-* Генерация CHANGELOG с подсчетом версии
-* Подготовка релизов
-
-### Руководства (`docs/`)
-
-* Стандарты разработки и документации
-* Правила коммитов
-* Требования к CHANGELOG
-* Best practices
-
-## Для кого
-
-| Для кого            | Польза                               |
-| ------------------- | ------------------------------------ |
-| Разработчики        | Единый стиль, ускорение работы       |
-| DevOps / SecOps     | Клиентские утилиты и стандарты       |
-| Начинающие инженеры | Изучение синтаксиса и основ          |
-| Команды             | Объединение экспертизы в одном месте |
-
-## Как использовать
-
-```bash
-git clone https://github.com/beesyst/workspace.git
-cd workspace
-
-# Изучать и использовать шаблоны:
-ls templates/
-```
-
+<!-- END:cheatsheets-toc -->
+<!-- START:cheatsheets-toc -->
