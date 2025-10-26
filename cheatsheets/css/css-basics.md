@@ -54,7 +54,7 @@ text-align: left / right / center; /* Выравнивание */
 
 ### Модель блока
 
-![Модель блока](images/9ty8ua.svg)
+![Модель блока](images/j6w63z.png)
 
 ## Размеры
 

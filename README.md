@@ -28,6 +28,39 @@
 ### Шпаргалки (`cheatsheets/`) 
 
 <details>
+  <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md">CSS Основы</a></strong></summary>
+  <ul>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9F%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D0%B8%D0%BB%D0%B5%D0%B9">Подключение стилей</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A1%D0%B5%D0%BB%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D1%8B">Селекторы</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A6%D0%B2%D0%B5%D1%82-%D0%B8-%D1%84%D0%BE%D0%BD">Цвет и фон</a></li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A8%D1%80%D0%B8%D1%84%D1%82%D1%8B">Шрифты</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9C%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B1%D0%BB%D0%BE%D0%BA%D0%B0">Модель блока</a></li>
+      </ul>
+    </li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A0%D0%B0%D0%B7%D0%BC%D0%B5%D1%80%D1%8B">Размеры</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%93%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D1%8B-%D0%B8-%D1%80%D0%B0%D0%BC%D0%BA%D0%B8">Границы и рамки</a></li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9E%D1%82%D1%81%D1%82%D1%83%D0%BF%D1%8B-%D0%B8-%D0%BF%D0%BE%D0%BB%D1%8F">Отступы и поля</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9F%D0%BE%D0%BB%D1%8F-%D1%81%D0%BD%D0%B0%D1%80%D1%83%D0%B6%D0%B8">Поля снаружи</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9E%D1%82%D1%81%D1%82%D1%83%D0%BF%D1%8B-%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B8">Отступы внутри</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A7%D1%82%D0%BE%D0%B1%D1%8B-%D1%83%D1%87%D0%B8%D1%82%D1%8B%D0%B2%D0%B0%D1%82%D1%8C-%D0%BE%D1%82%D1%81%D1%82%D1%83%D0%BF%D1%8B-%D0%B2-%D1%88%D0%B8%D1%80%D0%B8%D0%BD%D0%B5">Чтобы учитывать отступы в ширине</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%A1%D0%B5%D1%82%D0%BA%D0%B0-flexbox">Сетка (flexbox)</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#css">CSS</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#html">HTML</a></li>
+      </ul>
+    </li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%BA%D0%BD%D0%BE%D0%BF%D0%BA%D0%B8">Пример кнопки</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%84%D0%BE%D1%80%D0%BC%D1%8B">Пример формы</a></li>
+  </ul>
+</details>
+<details>
   <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md">HTML Основы</a></strong></summary>
   <ul>
     <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82">Минимальный документ</a></li>
