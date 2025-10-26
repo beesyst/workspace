@@ -156,7 +156,7 @@
   </ul>
 </details>
 
-### Python
+#### Python
 <details>
   <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
 <ul>
