@@ -28,6 +28,45 @@
 ### Шпаргалки (`cheatsheets/`) 
 
 <details>
+  <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md">HTML Основы</a></strong></summary>
+  <ul>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82">Минимальный документ</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8">Заголовки</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9F%D0%B0%D1%80%D0%B0%D0%B3%D1%80%D0%B0%D1%84%D1%8B">Параграфы</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5">Форматирование</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BA%D0%B8">Списки</a></li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B8">Ссылки</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F">Внутренняя</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D0%B5%D1%88%D0%BD%D1%8F%D1%8F">Внешняя</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%AF%D0%BA%D0%BE%D1%80%D0%BD%D0%B0%D1%8F">Якорная</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A4%D0%BE%D1%80%D0%BC%D1%8B">Формы</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F-%D1%84%D0%BE%D1%80%D0%BC%D0%B0">Минимальная форма</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D1%83%D0%B4%D0%B0-%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D1%8F%D1%82%D1%8C">Куда отправлять</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D0%B0%D0%BA-%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D1%8F%D1%82%D1%8C">Как отправлять</a></li>
+      </ul>
+    </li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9F%D0%BE%D0%BB%D1%8F-%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0-input">Поля ввода <code>input</code></a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A2%D0%B8%D0%BF%D1%8B-%D0%BF%D0%BE%D0%BB%D0%B5%D0%B9-input">Типы полей <code>input</code></a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A2%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B">Таблицы</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%B5%D0%BC%D0%B0%D0%BD%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%80%D0%B0%D0%B7%D0%BC%D0%B5%D1%82%D0%BA%D0%B0">Семантическая разметка</a></li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D0%B0%D1%80%D1%82%D0%B8%D0%BD%D0%BA%D0%B8">Картинки</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F-1">Внутренняя</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D0%B5%D1%88%D0%BD%D1%8F%D1%8F-1">Внешняя</a></li>
+      </ul>
+    </li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A0%D0%B0%D0%B7%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D0%B8">Разделители</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%BF%D0%B5%D1%86%D1%81%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D1%8B">Спецсимволы</a></li>
+  </ul>
+</details>
+<details>
   <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
 <ul>
 <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%B5%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%B8-%D1%82%D0%B8%D0%BF%D1%8B-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85">Переменные и типы данных</a>
@@ -101,46 +140,6 @@
 <li><a href="cheatsheets/python/python-basics.md#%D0%9F%D0%BE-%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F%D0%BC">По значениям</a></li>
 </ul>
 </details>
-<details>
-  <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md">HTML Основы</a></strong></summary>
-  <ul>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82">Минимальный документ</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8">Заголовки</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9F%D0%B0%D1%80%D0%B0%D0%B3%D1%80%D0%B0%D1%84%D1%8B">Параграфы</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5">Форматирование</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BA%D0%B8">Списки</a></li>
-    <li>
-      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B8">Ссылки</a>
-      <ul>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F">Внутренняя</a></li>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D0%B5%D1%88%D0%BD%D1%8F%D1%8F">Внешняя</a></li>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%AF%D0%BA%D0%BE%D1%80%D0%BD%D0%B0%D1%8F">Якорная</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A4%D0%BE%D1%80%D0%BC%D1%8B">Формы</a>
-      <ul>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F-%D1%84%D0%BE%D1%80%D0%BC%D0%B0">Минимальная форма</a></li>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D1%83%D0%B4%D0%B0-%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D1%8F%D1%82%D1%8C">Куда отправлять</a></li>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D0%B0%D0%BA-%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D1%8F%D1%82%D1%8C">Как отправлять</a></li>
-      </ul>
-    </li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9F%D0%BE%D0%BB%D1%8F-%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0-input">Поля ввода <code>input</code></a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A2%D0%B8%D0%BF%D1%8B-%D0%BF%D0%BE%D0%BB%D0%B5%D0%B9-input">Типы полей <code>input</code></a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A2%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B">Таблицы</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%B5%D0%BC%D0%B0%D0%BD%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%80%D0%B0%D0%B7%D0%BC%D0%B5%D1%82%D0%BA%D0%B0">Семантическая разметка</a></li>
-    <li>
-      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%9A%D0%B0%D1%80%D1%82%D0%B8%D0%BD%D0%BA%D0%B8">Картинки</a>
-      <ul>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D1%8F%D1%8F-1">Внутренняя</a></li>
-        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%92%D0%BD%D0%B5%D1%88%D0%BD%D1%8F%D1%8F-1">Внешняя</a></li>
-      </ul>
-    </li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A0%D0%B0%D0%B7%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D0%B8">Разделители</a></li>
-    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%BF%D0%B5%D1%86%D1%81%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D1%8B">Спецсимволы</a></li>
-  </ul>
-</details>
-
 
 ### Шаблоны (`templates/`)
 
