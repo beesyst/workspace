@@ -25,7 +25,9 @@
 
 ## Компоненты WorkSpace
 
-### Шпаргалки (`cheatsheets/`) 
+### Шпаргалки (`cheatsheets/`)
+
+#### CSS
 
 <details>
   <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md">CSS Основы</a></strong></summary>
@@ -60,6 +62,60 @@
     <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/css/css-basics.md#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%84%D0%BE%D1%80%D0%BC%D1%8B">Пример формы</a></li>
   </ul>
 </details>
+
+#### Docker
+
+<details>
+  <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md">Docker Основы</a></strong></summary>
+  <ul>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-%D0%B8-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B">Установка и документы</a></li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9E%D0%B1%D1%80%D0%B0%D0%B7%D1%8B-images">Образы (Images)</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BE%D0%B1%D1%80%D0%B0%D1%82%D1%8C-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7-%D0%B8%D0%B7-dockerfile">Собрать образ из Dockerfile</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-%D0%B1%D0%B5%D0%B7-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D0%BA%D1%8D%D1%88%D0%B0">Сборка без использования кэша</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%BB%D0%BE%D0%BA%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D1%85-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2">Список локальных образов</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B8%D1%82%D1%8C-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7">Удалить образ</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B8%D1%82%D1%8C-%D0%B2%D1%81%D0%B5-%D0%BD%D0%B5%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D0%B5%D0%BC%D1%8B%D0%B5-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D1%8B">Удалить все неиспользуемые образы</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#docker-hub">Docker Hub</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%92%D0%BE%D0%B9%D1%82%D0%B8-%D0%B2-docker-hub">Войти в Docker Hub</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9E%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7">Опубликовать образ</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9F%D0%BE%D0%B8%D1%81%D0%BA-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B0-%D0%BD%D0%B0-hub">Поиск образа на Hub</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-pull-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7">Скачать (pull) образ</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B">Общие команды</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C-%D0%B4%D0%B5%D0%BC%D0%BE%D0%BD-docker-linux">Запустить демон Docker (Linux)</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BF%D1%80%D0%B0%D0%B2%D0%BA%D0%B0-%D0%BF%D0%BE-docker">Справка по Docker</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%BD%D0%B0%D1%8F-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F">Системная информация</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9A%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D1%8B">Контейнеры</a>
+      <ul>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C-%D0%B8-%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80-%D0%B8%D0%B7-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B0-%D1%81-%D1%81%D0%BE%D0%B1%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%BC-%D0%B8%D0%BC%D0%B5%D0%BD%D0%B5%D0%BC">Создать и запустить контейнер из образа с собственным именем</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9F%D1%80%D0%BE%D0%B1%D1%80%D0%BE%D1%81%D0%B8%D1%82%D1%8C-%D0%BF%D0%BE%D1%80%D1%82%D1%8B-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%B0-%D0%BD%D0%B0-%D1%85%D0%BE%D1%81%D1%82">Пробросить порты контейнера на хост</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA-%D0%B2-%D1%84%D0%BE%D0%BD%D0%B5-detached">Запуск в фоне (detached)</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D1%82%D0%B0%D1%80%D1%82%D1%81%D1%82%D0%BE%D0%BF-%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D1%83%D1%8E%D1%89%D0%B5%D0%B3%D0%BE-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%B0">Старт/стоп существующего контейнера</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B8%D1%82%D1%8C-%D0%BE%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80">Удалить остановленный контейнер</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8C-shell-%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B8-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D1%8E%D1%89%D0%B5%D0%B3%D0%BE-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%B0">Открыть shell внутри работающего контейнера</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%9B%D0%BE%D0%B3%D0%B8-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%B0-%D1%81-%E2%80%9C%D0%BF%D0%BE%D0%B4%D0%BF%D0%B8%D1%81%D0%BA%D0%BE%D0%B9%E2%80%9D">Логи контейнера (с “подпиской”)</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%98%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F-%D0%BE-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%B5">Информация о контейнере</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B7%D0%B0%D0%BF%D1%83%D1%89%D0%B5%D0%BD%D0%BD%D1%8B%D1%85-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%BE%D0%B2">Список запущенных контейнеров</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%B2%D1%81%D0%B5%D1%85-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80%D0%BE%D0%B2-%D0%B2%D0%BA%D0%BB%D1%8E%D1%87%D0%B0%D1%8F-%D0%BE%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5">Список всех контейнеров (включая остановленные)</a></li>
+        <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/docker/docker-basics.md#%D0%A1%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D1%80%D0%B5%D1%81%D1%83%D1%80%D1%81%D0%BE%D0%B2">Статистика использования ресурсов</a></li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
+#### HTML
 <details>
   <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md">HTML Основы</a></strong></summary>
   <ul>
@@ -99,6 +155,8 @@
     <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/html/html-basics.md#%D0%A1%D0%BF%D0%B5%D1%86%D1%81%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D1%8B">Спецсимволы</a></li>
   </ul>
 </details>
+
+### Python
 <details>
   <summary><strong><a href="cheatsheets/python/python-basics.md">Python Основы</a></strong></summary>
 <ul>
