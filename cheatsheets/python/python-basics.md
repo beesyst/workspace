@@ -86,13 +86,15 @@
 
 ### Простой вывод
 
-```python
+```
+python
 print("Hello world!")
 ```
 
 ### Вывод переменной
 
-```msg = "Hello world!"
+```
+msg = "Hello world!"
 print(msg)
 ```
 
@@ -100,17 +102,20 @@ print(msg)
 
 ### Подсказка для ввода строки
 
-```name = input("What’s your name? ")
+```
+name = input("What’s your name? ")
 print("Hello, " + name + "!")
 ```
 
 ### Преобразование введенных чисел
 
-```age = input("How old are you? ")
+```
+age = input("How old are you? ")
 age = int(age)
 ```
 
-```pi = input("What’s the value of pi? ")
+```
+pi = input("What’s the value of pi? ")
 pi = float(pi)
 ```
 
@@ -147,7 +152,8 @@ pi = float(pi)
 
 Пример форматирования
 
-```"Привет {} !".format("Вася")
+```
+"Привет {} !".format("Вася")
 # → "Привет Вася !"
 ```
 
@@ -155,13 +161,15 @@ pi = float(pi)
 
 ### If условие
 
-```if age >= 18:
+```
+if age >= 18:
     print("You can vote!")
 ```
 
 ### If / Elif / Else
 
-```if age < 4:
+```
+if age < 4:
     ticket_price = 0
 elif age < 18:
     ticket_price = 10
@@ -185,7 +193,8 @@ can_edit = False
 
 ### Условия со списками
 
-```if <значение> in <список>:
+```
+if <значение> in <список>:
     <блок кода>
 
 if <значение> not in <список>:
@@ -214,7 +223,8 @@ if <значение> not in <список>:
 
 ### Переменные и многоуровневые списки
 
-```a = "is"
+```
+a = "is"
 b = "nice"
 my_list = [a, b]
 
@@ -270,20 +280,23 @@ my_list2 = [[4,5,6,7], [3,4,5,6]]
 
 #### while
 
-```i = 0
+```
+i = 0
 while i < 5:
     print(i)
     i += 1
 ```
 #### for
 
-```for item in ["a", "b", "c"]:
+```
+for item in ["a", "b", "c"]:
     print(item)
 ```
 
 ### Диапазон range()
 
-```for item in range(0, 5):
+```
+for item in range(0, 5):
     print(item)
 ```
 
@@ -308,17 +321,20 @@ while i < 5:
 
 ### Простой словарь
 
-```alien = { "color": "green", "points": 5 }
+```
+alien = { "color": "green", "points": 5 }
 ```
 
 ### Получение значения
 
-```print("The alien’s color is " + alien["color"])
+```
+print("The alien’s color is " + alien["color"])
 ```
 
 ### Добавление новой пары
 
-```alien["x_position"] = 0
+```
+alien["x_position"] = 0
 ```
 
 ### Методы словарей
@@ -348,21 +364,24 @@ while i < 5:
 
 ### По парам ключ–значение
 
-```fav_number = {"eric": 17, "ever": 4}
+```
+fav_number = {"eric": 17, "ever": 4}
 for name, number in fav_number.items():
     print(name + " loves " + str(number))
 ```
 
 ### По всем ключам
 
-```fav_number = {"eric": 17, "ever": 4}
+```
+fav_number = {"eric": 17, "ever": 4}
 for name in fav_number.keys():
     print(name + " loves a number")
 ```
 
 ## По значениям
 
-```fav_number = {"eric": 17, "ever": 4}
+```
+fav_number = {"eric": 17, "ever": 4}
 for number in fav_number.values():
     print(str(number) + " is a favorite")
 ```
