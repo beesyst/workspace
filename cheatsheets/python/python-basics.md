@@ -385,8 +385,3 @@ fav_number = {"eric": 17, "ever": 4}
 for number in fav_number.values():
     print(str(number) + " is a favorite")
 ```
-
-
-
-
-
