@@ -78,6 +78,22 @@
   </ul>
 </details>
 
+#### BD
+<details>
+  <summary><strong><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md">SQL</a></strong></summary>
+  <ul>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%A3%D1%87%D0%B5%D0%B1%D0%BD%D1%8B%D0%B5-%D1%82%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%BE%D0%B2">Учебные таблицы (для примеров)</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%91%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9-select">Базовый SELECT</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%92%D1%8B%D0%B1%D0%BE%D1%80-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D1%86%D0%BE%D0%B2-%D0%B8-%D0%BF%D1%81%D0%B5%D0%B2%D0%B4%D0%BE%D0%BD%D0%B8%D0%BC%D1%8B-as">Выбор столбцов и псевдонимы (AS)</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%92%D1%8B%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B8-%D0%B2%D1%8B%D1%87%D0%B8%D1%81%D0%BB%D1%8F%D0%B5%D0%BC%D1%8B%D0%B5-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D1%86%D1%8B">Выражения и вычисляемые столбцы</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%A4%D0%B8%D0%BB%D1%8C%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F-where">Фильтрация: WHERE</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%A1%D0%BE%D1%80%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D0%B0-%D0%B8-%D0%BE%D0%B3%D1%80%D0%B0%D0%BD%D0%B8%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D1%80%D0%BE%D0%BA">Сортировка и ограничение строк</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%9F%D0%BE%D0%BB%D0%B5%D0%B7%D0%BD%D1%8B%D0%B5-%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%D1%8B">Полезные шаблоны</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%9F%D0%B0%D0%BC%D1%8F%D1%82%D0%BA%D0%B0-%D0%BF%D0%BE-%D0%BA%D0%B0%D0%B2%D1%8B%D1%87%D0%BA%D0%B0%D0%BC-%D0%B8-%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8E">Памятка по кавычкам и экранированию</a></li>
+    <li><a href="https://github.com/beesyst/workspace/blob/main/cheatsheets/db/sql.md#%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D1%8B-%D0%B4%D0%B0%D1%82%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%B8-mysql">Форматы дат/времени (MySQL)</a></li>
+  </ul>
+</details>
+
 #### Docker
 
 <details>
